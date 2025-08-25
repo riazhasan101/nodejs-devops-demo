@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image Demo
 
 on:
   push:
@@ -24,4 +24,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: riaz1308/nodejs-devops-demo:latest
+          tags: riaz1308/nodejs-devops-demo:latest 
