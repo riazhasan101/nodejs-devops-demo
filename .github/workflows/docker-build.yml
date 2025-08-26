@@ -3,22 +3,34 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - run: npm install
-      - run: npm test
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build & Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -41,7 +53,10 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-devops-demo:latest
             docker stop nodejs-devops-demo || true
             docker rm nodejs-devops-demo || true
-            docker run -d -p 3000:3000 --name nodejs-devops-demo ${{ secrets.DOCKER_USERNAME }}/nodejs-devops-demo:latest
+            docker run -d -p 3000:3000 \
+              --restart always \
+              --name nodejs-devops-demo \
+              ${{ secrets.DOCKER_USERNAME }}/nodejs-devops-demo:latest
 
   # deploy_remote:
   #   needs: build
