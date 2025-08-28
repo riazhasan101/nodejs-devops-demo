@@ -48,7 +48,7 @@ jobs:
         with:
           host: ${{ secrets.LOCAL_DEPLOY_HOST }}
           username: ${{ secrets.LOCAL_DEPLOY_USER }}
-          key: ${{ secrets.LOCAL_DEPLOY_KEY }}
+          password: ${{ secrets.LOCAL_DEPLOY_PASSWORD }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-devops-demo:latest
             docker stop nodejs-devops-demo || true
